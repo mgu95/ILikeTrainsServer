@@ -14,7 +14,7 @@ public class Main extends Application {
         gameRules.setBoardHeight(10);
         gameRules.setBoardWidth(20);
         gameRules.setAmountOfCities(10);
-        Board board = new Board(gameRules);
+        Board board = new Board(1L, "test", gameRules, 1);
         board.printBoard();
 
 //        Parent root = FXMLLoader.load(getClass().getResource("sample.sample.fxml"));

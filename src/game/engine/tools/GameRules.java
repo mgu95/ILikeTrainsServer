@@ -7,7 +7,7 @@ import game.engine.tools.exceptions.NoGameParameterException;
 
 public class GameRules {
 
-    Loger loger = new ConsoleLoger(true);
+    Loger loger = new ConsoleLoger(false);
 
     private final int minBoardHeight = 10;
     private final int maxBoardHeight = 20;
@@ -69,6 +69,8 @@ public class GameRules {
 
         loger.addToLog("GameRules.setBoardWidth(" + boardWidth + ") {");
         if (boardWidth < minBoardWidth || boardWidth > maxBoardWidth) {
+            loger.addToLog("   throw new BoardDimensionsException();", "}");
+            loger.print();
             throw new BoardDimensionsException();
         } else if (this.boardWidth != null) {
             throw new GameParameterIsAlreadySetException();

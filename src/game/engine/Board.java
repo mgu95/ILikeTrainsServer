@@ -3,26 +3,29 @@ package game.engine;
 import game.engine.tools.GameRules;
 import game.engine.tools.exceptions.NoGameParameterException;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class Board {
 
+    private long id;
+    private String name;
     private int width;
     private int height;
     private Field[][] fields;
     private Set<City> cities;
     private Set<Route> routes;
     private Set<Connection> connections;
+    private Player[] players;
 
-    public Board(GameRules gameRules) throws NoGameParameterException {
+    public Board(long id, String name, GameRules gameRules, int players) throws NoGameParameterException {
 
+        this.id = id;
+        this.name = name;
         this.width = gameRules.getBoardWidth();
         this.height = gameRules.getBoardHeight();
         fields = new Field[width][height];
         generateCities(gameRules.getAmountOfCities());
+        this.players = new Player[players];
     }
 
     private void placeCity() {
@@ -62,9 +65,9 @@ public class Board {
                 "Rejkiawik", "Astana", "Moskwa", "Bukareszt", "San Marino", "Bratysława", "Lublana", "Berno",
                 "Sztokholm", "Ankara", "Kijów", "Watykan", "Budapeszt", "Londyn", "Rzym"};
         cities = new HashSet<>();
-        while (cities.size() < amount) {
-            //cities.add(new City(generateFieldId()));
-        }
+//        while (cities.size() < amount) {
+//            //cities.add(new City(generateFieldId()));
+//        }
     }
 
     public long generateFieldId(int fieldHeight, int fieldWidth) {
@@ -98,5 +101,22 @@ public class Board {
         System.out.println(board.toString());
         System.out.println();
         System.out.println(legend.toString());
+    }
+
+    public String getInfo() {
+
+        int emptyPlayers = 0;
+        for (Player player : players) {
+            if (player == null) {
+                emptyPlayers++;
+            }
+        }
+        return "[ id = " + id +
+                ", nazwa stołu = " + name +
+                ", wielkość planszy = " + width +
+                " * " + height +
+                ", ilość miast = " + cities.size() +
+                ", ilość graczy = " + emptyPlayers + "/" + players.length +
+                " ]";
     }
 }
