@@ -1,25 +1,35 @@
 package game.engine;
 
-import game.engine.tools.GameRules;
-
-import java.util.Random;
-
 public class Field {
 
     private long fieldId;
-    private String color;
+    private int boardWidth;
+    private int boardHeight;
 
-    public Field(long fieldId) {
+    public Field(long fieldId, int boardWidth, int boardHeight) {
         this.fieldId = fieldId;
-        String[] colors = new GameRules().getCardColors();
-        color = colors[new Random().nextInt(colors.length + 1)];
+        this.boardWidth = boardWidth;
+        this.boardHeight = boardHeight;
     }
 
     public long getFieldId() {
         return fieldId;
     }
 
-    public String getColor() {
-        return color;
+    public int getBoardHeight() {
+        return boardHeight;
+    }
+
+    public int getBoardWidth() {
+        return boardWidth;
+    }
+
+    @Override
+    public String toString() {
+        return "Field{" +
+                "fieldId=" + fieldId +
+                ", boardHeight=" + boardHeight +
+                ", boardWidth=" + boardWidth +
+                '}';
     }
 }

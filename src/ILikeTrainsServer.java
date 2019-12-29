@@ -2,10 +2,6 @@ import game.engine.Board;
 import game.engine.Player;
 import game.engine.tools.GameRules;
 import game.engine.tools.HTTPStatus;
-import game.engine.tools.exceptions.AmountOfCitiesException;
-import game.engine.tools.exceptions.BoardDimensionsException;
-import game.engine.tools.exceptions.GameParameterIsAlreadySetException;
-import game.engine.tools.exceptions.NoGameParameterException;
 
 import java.io.*;
 import java.net.*;
@@ -20,8 +16,7 @@ public class ILikeTrainsServer {
     private static Set<Player> players = new HashSet<>();
     private static Set<Board> boards = new HashSet<>();
 
-    public static void main(String[] args) throws GameParameterIsAlreadySetException, BoardDimensionsException,
-            AmountOfCitiesException {
+    public static void main(String[] args) {
 
         String hostName = "localhost";
         int port = 8080;
@@ -34,11 +29,7 @@ public class ILikeTrainsServer {
 
             try (Socket socket = serverSocket.accept()) {
 
-                GameRules gameRules1 = new GameRules();
-                gameRules1.setBoardHeight(15);
-                gameRules1.setBoardWidth(25);
-                gameRules1.setAmountOfCities(35);
-                boards.add(new Board(1L, "testBoard", gameRules1, 1));
+                boards.add(new Board(1L, "testBoard", 1));
 
 
                 InetAddress clientAddress = socket.getInetAddress();
@@ -130,8 +121,6 @@ public class ILikeTrainsServer {
                 System.out.println(getCurrentDateAndTime() + "Wystąpił wyjątek obsługi klienta: "
                         + ioe.getLocalizedMessage());
                 ioe.printStackTrace();
-            } catch (NoGameParameterException e) {
-                e.printStackTrace();
             }
         }
         catch (BindException be) {
@@ -191,38 +180,6 @@ public class ILikeTrainsServer {
         }
         String[] itemsArray = new String[list.size()];
         return list.toArray(itemsArray);
-    }
-
-    private static GameRules prepareTable(String clientType) throws IOException, GameParameterIsAlreadySetException,
-            BoardDimensionsException, AmountOfCitiesException {
-
-        GameRules gameRules = new GameRules();
-        writer.println("Aby utworzyć stół należy podać wysokość i szerokość planszy. " +
-                "Wysokość stołu powinna wynosić pomiędzy " + gameRules.getMinBoardHeight() +
-                ", a " + gameRules.getMaxBoardHeight() + ". Szerokość stołu powinna wynosić pomiędzy " +
-                gameRules.getMinBoardWidth() + ", a " + gameRules.getMaxBoardWidth() +
-                ". Podaj wysokość planszy:");
-        writer.flush();
-
-        String msg = reader.readLine();
-        System.out.println(getCurrentDateAndTime() + "[ " + clientType + " ] prepareTable()\nsetBoardHeight(" + msg + ")");
-        gameRules.setBoardHeight(Integer.parseInt(msg));
-        writer.println("Podaj szerokość planszy:");
-        writer.flush();
-        msg = reader.readLine();
-        System.out.println(getCurrentDateAndTime() + "[ " + clientType + " ] prepareTable()\nsetBoardWidth(" + msg + ")");
-        gameRules.setBoardWidth(Integer.parseInt(msg));
-        writer.println("Teraz należy podać ilość miast. Dla podanej wielkości stołu ilość miast " +
-                "powinna wynosić pommiędzy " + gameRules.getMinAmountOfCities() + ", a " +
-                gameRules.getMaxAmountOfCities() + ". Podaj ilość miast:");
-        writer.flush();
-        msg = reader.readLine();
-        System.out.println(getCurrentDateAndTime() + "[ " + clientType + " ] prepareTable()\nsetAmountOfCities(" + msg + ")");
-        gameRules.setAmountOfCities(Integer.parseInt(msg));
-        writer.println("Pomyślnie utworzono stół!");
-        writer.flush();
-
-        return gameRules;
     }
 
     public static String getCurrentDateAndTime() {
