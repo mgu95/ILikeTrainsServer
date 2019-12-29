@@ -6,9 +6,9 @@ public class City extends Field {
     private String name;
     private String owner;
 
-    public City(long fieldId, long cityId, String name) {
+    public City(Field field, long cityId, String name) {
 
-        super(fieldId);
+        super(field.getFieldId(), field.getBoardWidth(), field.getBoardHeight());
         this.cityId = cityId;
         this.name = name;
     }
@@ -32,7 +32,12 @@ public class City extends Field {
     @Override
     public String toString() {
         return "City{" +
-                "name='" + name + '\'' +
+                "fieldId=" + getFieldId() +
+                ", boardHeight=" + getBoardHeight() +
+                ", boardWidth=" + getBoardWidth() +
+                ", cityId=" + cityId +
+                ", name=" + name +
+                ", owner=" + owner +
                 '}';
     }
 }
