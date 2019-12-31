@@ -6,32 +6,85 @@ import java.util.*;
 
 public class Board {
 
-    private GameRules gameRules = new GameRules();
     private long id;
     private String name;
-    private int width = (gameRules.getMinBoardWidth() + gameRules.getMaxBoardWidth()) / 2;
-    private int height = (gameRules.getMinBoardHeight() + gameRules.getMaxBoardHeight()) / 2;
+    private int width = (GameRules.BOARD_WIDTH.getMin() + GameRules.BOARD_WIDTH.getMax()) / 2;
+    private int height = (GameRules.BOARD_HEIGHT.getMin() + GameRules.BOARD_HEIGHT.getMax()) / 2;
     private Field[][] fields;
     private Player[] players;
 
     public static void main(String[] args) {
         Board board = new Board(1L, "testBoard", 1);
+        board.generateFields();
+        board.generateCities(20);
         board.printBoard();
 
+        // connect cities
+
+        //ustaw pierwszy wiersz na same Fieldy
+        for (int i = 0; i < board.getWidth(); i++) {
+            if (board.fields[i][0].getClass() == City.class) {
+                City city = (City) board.fields[i][0];
+                board.fields[i][0] = new Field(city.getFieldId(), city.getBoardWidth(), city.getBoardHeight());
+            }
+        }
+        // postaw w pierwszym wierszu dwa miasta
+        Set<City> cities = new HashSet<>();
+        Field field = board.fields[3][0];
+        board.fields[3][0] = new City(field, 80l, "TestCity80");
+        cities.add((City) board.fields[3][0]);
+        field = board.fields[8][0];
+        board.fields[8][0] = new City(field, 81l, "TestCity81");
+        cities.add((City) board.fields[8][0]);
+        //znajdz pierwsze z lewej
+        City firstLeftCity = cities.iterator().next();
+        for (City city : cities) {
+            if (city.getBoardWidth() < firstLeftCity.getBoardWidth()) {
+                firstLeftCity = city;
+            }
+        }
+        //znajdz sasiada po prawej
+        City firstCityOnRight = firstLeftCity;
+        for (City city : cities) {
+            if (!city.equals(firstLeftCity)) {
+                if (city.getBoardWidth() > firstCityOnRight.getBoardWidth()) {
+                    firstCityOnRight = city;
+                }
+            }
+        }
+        // połącz miasta
+        City c = (City) board.fields[firstLeftCity.getBoardWidth()][firstLeftCity.getBoardHeight()];
+        c.addRouteId(1l);
+        board.fields[firstLeftCity.getBoardWidth()][firstLeftCity.getBoardHeight()] = c;
+        City d = (City) board.fields[firstCityOnRight.getBoardWidth()][firstCityOnRight.getBoardHeight()];
+        d.addRouteId(1l);
+        board.fields[firstCityOnRight.getBoardWidth()][firstCityOnRight.getBoardHeight()] = d;
+        for (int i = firstLeftCity.getBoardWidth() + 1; i < firstCityOnRight.getBoardWidth(); i++) {
+            Field f = board.fields[i][0];
+            board.fields[i][0] = new Route(f, 1l, GameRules.getRouteColors()[0]);
+        }
+
+
+
+        board.printBoard();
+
+
+
+
+
+
+
+//        for(Field[] fields : board.fields) {
+//            for (Field fff : fields) {
+//                System.out.println(field.toString());
+//            }
+//        }
     }
 
     public Board(long id, String name, int players) {
         this.id = id;
         this.name = name;
         this.players = new Player[players];
-        generateFields();
-        generateCities(20);
-
-//        for(Field[] fields : fields) {
-//            for (Field field : fields) {
-//                System.out.println(field.toString());
-//            }
-//        }
     }
 
     private void generateCities(int amount) {
@@ -73,7 +126,8 @@ public class Board {
     public void printBoard() {
 
         StringBuilder board = new StringBuilder("  ");
-        StringBuilder legend = new StringBuilder("Legenda:\n");
+        StringBuilder cityLegend = new StringBuilder("Miasta:\n");
+        StringBuilder routeLegend = new StringBuilder("Trasy:\n");
         for (int i = 1; i < getWidth() + 1; i++) {
             board.append(" " + (char)(i + 64));
         }
@@ -83,9 +137,11 @@ public class Board {
                 if (fields[j][i].getClass() == Field.class) {
                     board.append("  ");
                 } else if (fields[j][i].getClass() == City.class) {
-                    board.append(" #");
-                    legend.append((char)(j + 65) + "" + (i + 1) + " "
-                            + fields[j][i].toString() + "\n");
+                    board.append("# ");
+                    cityLegend.append((char)(j + 65) + "" + (i + 1) + " " + fields[j][i].toString() + "\n");
+                } else if (fields[j][i].getClass() == Route.class) {
+                    board.append("- ");
+                    routeLegend.append((char)(j + 65) + "" + (i + 1) + " " + fields[j][i].toString() + "\n");
                 }
 //                else if (fields[i][j].getClass() == Route.class) {
 //                    System.out.println("JEST  TRASA");
@@ -95,9 +151,14 @@ public class Board {
         }
 
 
+
+
+
         System.out.println(board.toString());
         System.out.println();
-        System.out.println(legend.toString());
+        System.out.println(cityLegend.toString());
+        System.out.println();
+        System.out.println(routeLegend.toString());
     }
 
     public int getWidth() {

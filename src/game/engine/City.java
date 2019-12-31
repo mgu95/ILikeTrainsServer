@@ -1,16 +1,24 @@
 package game.engine;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class City extends Field {
 
     private long cityId;
     private String name;
     private String owner;
+    private Set<Long> routesIds = new HashSet<>();
 
     public City(Field field, long cityId, String name) {
 
         super(field.getFieldId(), field.getBoardWidth(), field.getBoardHeight());
         this.cityId = cityId;
         this.name = name;
+    }
+
+    public void addRouteId(long routeId) {
+        routesIds.add(routeId);
     }
 
     public long getCityId() {
@@ -29,7 +37,7 @@ public class City extends Field {
         this.owner = owner;
     }
 
-    @Override
+        @Override
     public String toString() {
         return "City{" +
                 "fieldId=" + getFieldId() +
@@ -38,6 +46,7 @@ public class City extends Field {
                 ", cityId=" + cityId +
                 ", name=" + name +
                 ", owner=" + owner +
+                ", routesIds=" + routesIds +
                 '}';
     }
 }

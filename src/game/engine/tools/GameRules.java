@@ -1,55 +1,35 @@
 package game.engine.tools;
 
-public class GameRules {
+public enum GameRules {
 
-    private final int minBoardHeight = 10;
-    private final int maxBoardHeight = 20;
-    private final int minBoardWidth = 20;
-    private final int maxBoardWidth = 30;
-    private final int minProcentRatioOfCitiesToTheNumberOfFields = 10;
-    private final int maxProcentRatioOfCitiesToTheNumberOfFields = 20;
-    private final int minPlayers = 1;
-    private final int maxPlayers = 5;
-    private final String[] routeColors = new String[]{"Red", "Yellow", "Blue", "Orange", "Pink", "Grey"};
-    private final String[] cardColors = new String[]{"Red", "Yellow", "Blue", "Orange", "Pink", "Rainbow"};
+    BOARD_HEIGHT(10, 20),
+    BOARD_WIDTH(20, 30),
+    PROCENT_OF_CITIES(10, 20),
+    NUMBER_OF_PLAYERS(1, 5);
 
-    public int getMinBoardHeight() {
-        return minBoardHeight;
+    private int min;
+    private int max;
+    private final static String[] routeColors = new String[]{"RED", "YELLOW", "BLUE", "ORANGE", "PINK", "GREY"};
+    private final static String[] cardColors = new String[]{"RED", "YELLOW", "BLUE", "ORANGE", "PINK", "RAINBOW"};
+
+    GameRules(int min, int max) {
+        this.min = min;
+        this.max = max;
     }
 
-    public int getMaxBoardHeight() {
-        return maxBoardHeight;
+    public int getMin() {
+        return min;
     }
 
-    public int getMinBoardWidth() {
-        return minBoardWidth;
+    public int getMax() {
+        return max;
     }
 
-    public int getMaxBoardWidth() {
-        return maxBoardWidth;
-    }
-
-    public int getMinProcentRatioOfCitiesToTheNumberOfFields() {
-        return minProcentRatioOfCitiesToTheNumberOfFields;
-    }
-
-    public int getMaxProcentRatioOfCitiesToTheNumberOfFields() {
-        return maxProcentRatioOfCitiesToTheNumberOfFields;
-    }
-
-    public int getMinPlayers() {
-        return minPlayers;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
-    public String[] getRouteColors() {
+    public static String[] getRouteColors() {
         return routeColors;
     }
 
-    public String[] getCardColors() {
+    public static String[] getCardColors() {
         return cardColors;
     }
 }
