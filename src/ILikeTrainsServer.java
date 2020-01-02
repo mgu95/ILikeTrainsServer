@@ -29,7 +29,7 @@ public class ILikeTrainsServer {
 
             try (Socket socket = serverSocket.accept()) {
 
-                boards.add(new Board(1L, "testBoard", 1));
+                boards.add(new Board(1L, 20, 20, 5));
 
 
                 InetAddress clientAddress = socket.getInetAddress();

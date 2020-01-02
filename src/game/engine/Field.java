@@ -3,33 +3,33 @@ package game.engine;
 public class Field {
 
     private long fieldId;
-    private int boardWidth;
-    private int boardHeight;
+    private int xPosition;
+    private int yPosition;
 
-    public Field(long fieldId, int boardWidth, int boardHeight) {
+    public Field(long fieldId, int xPosition, int yPosition) {
         this.fieldId = fieldId;
-        this.boardWidth = boardWidth;
-        this.boardHeight = boardHeight;
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
     }
 
     public long getFieldId() {
         return fieldId;
     }
 
-    public int getBoardHeight() {
-        return boardHeight;
+    public int getYPosition() {
+        return yPosition;
     }
 
-    public int getBoardWidth() {
-        return boardWidth;
+    public int getXPosition() {
+        return xPosition;
     }
 
     @Override
     public String toString() {
         return "Field{" +
                 "fieldId=" + fieldId +
-                ", boardHeight=" + boardHeight +
-                ", boardWidth=" + boardWidth +
+                ", xPosition=" + xPosition +
+                ", yPosition=" + yPosition +
                 '}';
     }
 }

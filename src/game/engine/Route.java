@@ -1,7 +1,5 @@
 package game.engine;
 
-import java.util.Set;
-
 public class Route extends Field {
 
     private long routeId;
@@ -9,7 +7,7 @@ public class Route extends Field {
     private String owner;
 
     public Route(Field field, long routeId, String color) {
-        super(field.getFieldId(), field.getBoardWidth(), field.getBoardHeight());
+        super(field.getFieldId(), field.getXPosition(), field.getYPosition());
         this.routeId = routeId;
         this.color = color;
     }
@@ -30,8 +28,8 @@ public class Route extends Field {
     public String toString() {
         return "Route{" +
                 "fieldId=" + getFieldId() +
-                ", boardHeight=" + getBoardHeight() +
-                ", boardWidth=" + getBoardWidth() +
+                ", yPosition=" + getYPosition() +
+                ", xPosition=" + getXPosition() +
                 ", routeId=" + routeId +
                 ", color='" + color + '\'' +
                 ", owner='" + owner + '\'' +
