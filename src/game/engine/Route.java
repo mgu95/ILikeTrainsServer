@@ -24,6 +24,10 @@ public class Route extends Field {
         return owner;
     }
 
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
     @Override
     public String toString() {
         return "Route{" +

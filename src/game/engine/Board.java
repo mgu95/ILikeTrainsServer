@@ -1,7 +1,9 @@
 package game.engine;
 
+import game.engine.tools.Deck;
 import game.engine.tools.GameRules;
 
+import javax.sound.midi.Soundbank;
 import java.util.*;
 
 public class Board {
@@ -9,6 +11,7 @@ public class Board {
     private long id;
     private Field[][] fields;
     private Player[] players;
+    private Deck deck;
 
     public Board(long id, int height, int width, int numberOfPlayers) {
         this.id = id;
@@ -133,6 +136,16 @@ public class Board {
         setRoute(58, "ORANGE", 35, 36);
         setRoute(59, "PINK", 36, 37);
         setRoute(60, "YELLOW", 28, 32);
+
+        deck = new Deck(10, 20);
+    }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Player[] players) {
+        this.players = players;
     }
 
     private City getCity(long cityId) {
@@ -166,21 +179,41 @@ public class Board {
                 = new City(fields[field.getXPosition()][field.getYPosition()], cityId, name);
     }
 
-    private Route getRoute(long routeId) {
+    public Set<Route> getRoute(long routeId) {
+        Set<Route> routes = new HashSet<>();
         for(Field[] fields : fields) {
             for (Field field : fields) {
                 if (field.getClass() == Route.class) {
                     Route r = (Route) field;
                     if (r.getRouteId() == routeId) {
-                        return r;
+                        routes.add(r);
                     }
                 }
             }
         }
-        throw new NullPointerException("There is no route with id " + routeId + "!");
+        if (routes.isEmpty()) {
+            throw new NullPointerException("There is no route with id " + routeId + "!");
+        } else {
+            return routes;
+        }
+
     }
 
-    private Set<Route> getAllRoutes() {
+    public void setRoute(Set<Route> routes) {
+        for(Field[] fields : fields) {
+            for (Field field : fields) {
+                if (field.getClass() == Route.class) {
+                    for (Route route : routes) {
+                        if (field.getFieldId() == route.getFieldId()) {
+                            field = route;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public Set<Route> getAllRoutes() {
         Set<Route> set = new HashSet<>();
         for(Field[] fields : fields) {
             for (Field field : fields) {
@@ -231,6 +264,14 @@ public class Board {
         fields[cityB.getXPosition()][cityB.getYPosition()] = cityB;
     }
 
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
+    }
+
     public void print() {
         StringBuilder board = new StringBuilder("   ");
         StringBuilder cityLegend = new StringBuilder("Miasta:\n");
@@ -257,7 +298,7 @@ public class Board {
                     cityLegend.append((char)(j + 65) + "" + (i + 1) + " " + tmpCity.getName() + " - ID = "
                             + tmpCity.getCityId() + ", połączenia = ");
                     for (long routeId : routes) {
-                        cityLegend.append(routeId + " (" + getRoute(routeId).getColor() + "), ");
+                        cityLegend.append(routeId + " (" + getRoute(routeId).iterator().next().getColor() + "), ");
                     }
                     cityLegend.append("właściciel = ");
                     if (tmpCity.getOwner() != null) {
@@ -280,15 +321,21 @@ public class Board {
             }
         }
         for (int i = 1; i < highestRouteId + 1; i++) {
-            routeLegend.append(i + " (" + getRoute(i).getColor() + ") = ");
+            routeLegend.append(i + " (" + getRoute(i).iterator().next().getColor() + ") ");
             Set<City> allCitiesOnBoard = getAllCities();
+            long[] routesId = new long[0];
             for (City city : allCitiesOnBoard) {
-                long[] routesId = city.getRoutesId();
+                routesId = city.getRoutesId();
                 for (long l : routesId) {
                     if (l == i) {
                         routeLegend.append(city.getName() + " <-> ");
                     }
                 }
+            }
+            if (getRoute(i).iterator().next().getOwner() != null) {
+                routeLegend.append(", właściciel = " + getRoute(i).iterator().next().getOwner());
+            } else {
+                routeLegend.append(", właściciel = brak");
             }
             String tmp = routeLegend.substring(0, routeLegend.length() - 5);
             routeLegend.setLength(0);
@@ -297,6 +344,86 @@ public class Board {
         }
         System.out.println(board.toString() + "\n\n" + cityLegend.toString() + "\n" + routeLegend.toString());
     }
+
+    public void printFor(String login) {
+        StringBuilder board = new StringBuilder("   ");
+        StringBuilder cityLegend = new StringBuilder("Miasta:\n");
+        StringBuilder routeLegend = new StringBuilder("Trasy:\n");
+        Field[][] f = this.fields;
+        for (int i = 1; i < f.length + 1; i++) {
+            board.append((char)(i + 64) + " ");
+        }
+        Set<Route> allRoutes = new HashSet<>();
+        for (int i = 0; i < f[0].length; i++) {
+            if (i < 9) {
+                board.append("\n" + (i + 1) + "  ");
+            } else {
+                board.append("\n" + (i + 1) + " ");
+            }
+
+            for (int j = 0; j < f.length; j++) {
+                if (f[j][i].getClass() == Field.class) {
+                    board.append("  ");
+                } else if (f[j][i].getClass() == City.class) {
+                    board.append("# ");
+                    City tmpCity = (City) f[j][i];
+                    long[] routes = tmpCity.getRoutesId();
+                    cityLegend.append((char)(j + 65) + "" + (i + 1) + " " + tmpCity.getName() + " - ID = "
+                            + tmpCity.getCityId() + ", połączenia = ");
+                    for (long routeId : routes) {
+                        cityLegend.append(routeId + " (" + getRoute(routeId).iterator().next().getColor() + "), ");
+                    }
+                    cityLegend.append("właściciel = ");
+                    if (tmpCity.getOwner() != null) {
+                        cityLegend.append(tmpCity.getOwner());
+                    } else {
+                        cityLegend.append("brak");
+                    }
+                    cityLegend.append("\n");
+                } else if (f[j][i].getClass() == Route.class) {
+                    Route tmpRoute = (Route) f[j][i];
+                    try {
+                        if (tmpRoute.getOwner().equals(login)) {
+                            board.append("* ");
+                        }
+                    } catch (NullPointerException npe) {
+                        board.append(tmpRoute.getColor().substring(0, 1) + " ");
+                        allRoutes.add(tmpRoute);
+                    }
+                }
+            }
+        }
+        long highestRouteId = 0;
+        for (Route route : allRoutes) {
+            if (route.getRouteId() > highestRouteId) {
+                highestRouteId = route.getRouteId();
+            }
+        }
+        for (int i = 1; i < highestRouteId + 1; i++) {
+            routeLegend.append(i + " (" + getRoute(i).iterator().next().getColor() + ") ");
+            Set<City> allCitiesOnBoard = getAllCities();
+            long[] routesId = new long[0];
+            for (City city : allCitiesOnBoard) {
+                routesId = city.getRoutesId();
+                for (long l : routesId) {
+                    if (l == i) {
+                        routeLegend.append(city.getName() + " <-> ");
+                    }
+                }
+            }
+            if (getRoute(i).iterator().next().getOwner() != null) {
+                routeLegend.append(", właściciel = " + getRoute(i).iterator().next().getOwner());
+            } else {
+                routeLegend.append(", właściciel = brak");
+            }
+            String tmp = routeLegend.substring(0, routeLegend.length() - 5);
+            routeLegend.setLength(0);
+            routeLegend.append(tmp);
+            routeLegend.append("\n");
+        }
+        System.out.println(board.toString() + "\n\n" + cityLegend.toString() + "\n" + routeLegend.toString());
+    }
+
 
 
     // OLD BOARD
