@@ -1,7 +1,6 @@
 package game.engine;
 
 import game.engine.tools.Deck;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,8 +33,9 @@ class MoveTest {
     void setUp() {
         move = new Move();
         board = new Board(1);
+        board.setDeck(new Deck(10, 10, 10, 10, 10, 10, 10, 10, 10));
         testPlayer = new Player("testPlayer");
-        testPlayer.setDeck(new Deck(1, 5));
+        testPlayer.setDeck(new Deck(1, 3, 1, 1, 1, 1, 1, 1, 5));
         board.setPlayers(new Player[]{testPlayer, new Player("player1"), new Player("player2"),
                 new Player("player3"), new Player("player4")});
     }
@@ -43,13 +43,13 @@ class MoveTest {
     @Test
     void whenPlayerBuyRouteCardShouldBackToBoardDeck() {
         board = move.buyRoute("testPlayer", board, 2);
-        assertEquals(23, board.getDeck().getAmountCards("YELLOW"));
+        assertEquals(13, board.getDeck().getAmountCards("YELLOW"));
     }
 
     @Test
     void playerShouldBuyRouteWithNormalCard() {
         board = move.buyRoute("testPlayer", board, 2);
-        assertEquals(2, getPlayerDeckBalance()[1]);
+        assertEquals(0, getPlayerDeckBalance()[1]);
     }
 
     @Test
@@ -62,7 +62,7 @@ class MoveTest {
 
     @Test
     void playerShouldBuyRouteWithOnlyRainbowCards() {
-        testPlayer.setDeck(new Deck(5, 0));
+        testPlayer.setDeck(new Deck(0, 0, 0, 0, 0, 0, 0, 0, 5));
         board.setPlayers(new Player[]{testPlayer, new Player("player1"), new Player("player2"),
                 new Player("player3"), new Player("player4")});
         board = move.buyRoute("testPlayer", board, 54);
@@ -71,7 +71,7 @@ class MoveTest {
 
     @Test
     void playerCantBuyRoute() {
-        testPlayer.setDeck(new Deck(0, 0));
+        testPlayer.setDeck(new Deck(0, 0, 0, 0, 0, 0, 0, 0, 0));
         board.setPlayers(new Player[]{testPlayer, new Player("player1"), new Player("player2"),
                 new Player("player3"), new Player("player4")});
         IllegalArgumentException exception = assertThrows(

@@ -9,8 +9,9 @@ public enum GameRules {
 
     private int min;
     private int max;
-    private final static String[] routeColors = new String[]{"RED", "YELLOW", "BLUE", "ORANGE", "PINK", "GREY"};
-    private final static String[] cardColors = new String[]{"RED", "YELLOW", "BLUE", "ORANGE", "PINK", "RAINBOW"};
+    private final static String[] cardColors = new String[]{"PINK", "BLACK", "BLUE", "YELLOW", "RED", "ORANGE",
+            "WHITE", "GREEN", "RAINBOW"};
+    private final static String[] playerColors = new String[]{"RED", "YELLOW", "BLUE", "GREEN", "BLACK"};
 
     GameRules(int min, int max) {
         this.min = min;
@@ -25,8 +26,8 @@ public enum GameRules {
         return max;
     }
 
-    public static String[] getRouteColors() {
-        return routeColors;
+    public static String[] getPlayerColors() {
+        return playerColors;
     }
 
     public static String[] getCardColors() {
